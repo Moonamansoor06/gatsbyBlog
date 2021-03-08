@@ -5,13 +5,15 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
-const BlogIndex = ({ data, location }) => {
-  const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+const BlogIndex = (props) => {
+  const siteTitle = props.data.site.siteMetadata.title || `Title`
+  const posts = props.data.allContentfulBlogPost.edges
+  const location=props.location
+  
 
   if (posts.length === 0) {
     return (
-      <Layout location={location} title={siteTitle}>
+      <Layout location={location} title={posts.title}>
         <SEO title="All posts" />
         <Bio />
         <p>
@@ -28,39 +30,33 @@ const BlogIndex = ({ data, location }) => {
       <SEO title="All posts" />
       <Bio />
       <ol style={{ listStyle: `none` }}>
-        {posts.map(post => {
-          const title = post.frontmatter.title || post.fields.slug
+        {posts.map(({node}) => {
+          const title = node.title || node.slug
 
           return (
-            <li key={post.fields.slug}>
-              <article
-                className="post-list-item"
-                itemScope
-                itemType="http://schema.org/Article"
-              >
+            <li key={node.slug}>
+              
                 <header>
                   <h2>
-                    <Link to={post.fields.slug} itemProp="url">
-                      <span itemProp="headline">{title}</span>
+                    <Link to={node.slug} itemProp="url">
+                      <span itemProp="headline">{node.title}</span>
                     </Link>
                   </h2>
-                  <small>{post.frontmatter.date}</small>
+                  <small>{node.date}</small>
                 </header>
                 <section>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
-                    }}
-                    itemProp="description"
-                  />
+                  <p>{node.subtitle}</p>
+                    
+                
                 </section>
-              </article>
+            
             </li>
           )
         })}
       </ol>
     </Layout>
-  )
+  ) 
+
 }
 
 export default BlogIndex
@@ -72,18 +68,20 @@ export const pageQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
-      nodes {
-        excerpt
-        fields {
-          slug
-        }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
-          title
-          description
-        }
+  allContentfulBlogPost{
+    edges{
+      node{
+        slug
+      title
+      subtitle
+      author
+      
+      
       }
     }
-  }
+      
+      }
+    
+    }
+ 
 `

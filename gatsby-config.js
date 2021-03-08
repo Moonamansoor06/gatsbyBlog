@@ -5,24 +5,32 @@ if(process.env.Node_ENV!='production'){
 
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `MY BLOG SITE`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Moona Mansoor`,
+      summary: `Creating this site as my project`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsby-starter-blog-demo.netlify.app/`,
+    description: `Web developments tools`,
+    siteUrl: `https://project12A-blog.netlify.app/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `MMansoor06`,
     },
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-material-ui`,
+      options: {
+        disableAutoprefixing: false,
+        disableMinification: false,
+      },
+    },
+    `@contentful/gatsby-transformer-contentful-richtext`,
     {
       resolve: `gatsby-source-contentful`,
       options: {
         spaceId: process.env.SPACE_ID,
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-        host: `preview.contentful.com`,
+  
       },
     },
     {
