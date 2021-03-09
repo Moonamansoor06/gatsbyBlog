@@ -1,28 +1,21 @@
-name: Eleventy Build on Contentful Publish Event
-on:
-repository_dispatch:
-types: [publish-event]
+name: Build & Deploy to Production
+
+# Run when a dispatch event is created (e.g. from a CMS Webhook)
+# See https://developer.github.com/v3/repos/#create-a-repository-dispatch-event
+on: [repository_dispatch]
 
 jobs:
-deploy:
-runs-on: ubuntu-18.04
-steps:
-- uses: actions/checkout@v2
-- name: Setup Node
-uses: actions/setup-node@v1
-with:
-node-version: '12.x'
+  build:
+    runs-on: ubuntu-latest
 
--name: Cache dependencies
--uses: actions/cache@v1
--with:
- path: ~/.npm
- key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
- restore-keys: ${{ runner.os }}-node-- 
- run: npm ci
--run: npm run build
--name: Deploy
-uses: peaceiris/actions-gh-pages@v3
-with:
-deploy_key: ${{ secrets.SURGE_TOKEN }}
-publish_dir: _site
+    steps:
+    - uses: actions/checkout@v1 # Equivalent to `git checkout master`
+    
+    - name: Install dependencies
+      run: yarn
+    
+    - name: Build
+      run: yarn build
+    
+    - name: Deploy
+      run: now _build/ --prod -t ${{ secrets.ZEIT_TOKEN }}
