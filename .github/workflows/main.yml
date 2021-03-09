@@ -1,0 +1,21 @@
+name: Build & Deploy to Production
+
+# Run when a dispatch event is created (e.g. from a CMS Webhook)
+# See https://developer.github.com/v3/repos/#create-a-repository-dispatch-event
+on: [repository_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1 # Equivalent to `git checkout master`
+    
+    - name: Install dependencies
+      run: yarn
+    
+    - name: Build
+      run: yarn build
+    
+    - name: Deploy
+      run: now _build/ --prod -t ${{ secrets.SURGE_TOKEN }}
